@@ -4,6 +4,7 @@ import Schema from './graphql/Schema';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import jwt from 'express-jwt';
 
 dotenv.config();
 
@@ -14,8 +15,6 @@ declare global {
         }
     }
 }
-
-const publicKey = process.env.PUBLIC_KEY as string;
 
 console.log(process.env.MONGODB_URI);
 
@@ -29,13 +28,14 @@ process.on('SIGINT', () => {
 
 const app = express();
 
-
 app.use(cors({
     origin: function(origin, callback){
         return callback(null, true);
     },
     credentials: true,
 }));
+
+app.use(jwt({ secret: process.env.PUBLIC_KEY as string }),)
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     req.user = { _id: "123" };
