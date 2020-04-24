@@ -29,17 +29,18 @@ process.on('SIGINT', () => {
 const app = express();
 
 app.use(cors({
-    origin: function(origin, callback){
+    origin: function (origin, callback) {
         return callback(null, true);
     },
     credentials: true,
 }));
 
-app.use(jwt({ secret: process.env.SECRET as string }),)
+app.use(jwt({ secret: process.env.SECRET }));
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-    req.user = { _id: "123" };
-    next();
+app.use(function (err, req, res, next) {
+    if (err.name === 'UnauthorizedError') {
+      res.status(401).send('UnauthorizedError: Invalid token');
+    }
 });
 
 app.use('/',
@@ -52,4 +53,5 @@ app.use('/',
     }))
 );
 
-app.listen(process.env.PORT || 5000, () => { console.log("Listening on port " + process.env.PORT || 5000) });
+const port = process.env.PORT || 5000;
+app.listen(port, () => { console.log("Listening on port " + port) });
