@@ -9,7 +9,8 @@ export interface Todo extends Document {
 const TodoSchema: Schema = new Schema({
     text: { type: String, required: true },
     userId: { type: Schema.Types.String, required: true },
-    isCompleted: { type: Schema.Types.Boolean, default: false }
+    isCompleted: { type: Schema.Types.Boolean, default: false },
+    date: { type: Schema.Types.Date, default: Date.now }
 });
 
 export default mongoose.model<Todo>('Todo', TodoSchema);
