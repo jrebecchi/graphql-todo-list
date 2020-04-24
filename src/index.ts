@@ -35,7 +35,7 @@ app.use(cors({
     credentials: true,
 }));
 
-app.use(jwt({ secret: process.env.PUBLIC_KEY as string }),)
+app.use(jwt({ secret: process.env.SECRET as string }),)
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     req.user = { _id: "123" };
@@ -47,7 +47,7 @@ app.use('/',
         schema: Schema,
         graphiql: true,
         context: {
-            userId: req.user._id,
+            userId: req.user[process.env.USER_ID_FIELD_NAME as string || '_id'],
         },
     }))
 );
