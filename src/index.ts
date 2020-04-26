@@ -38,19 +38,21 @@ app.use(cors({
 app.use(jwt({ secret: process.env.SECRET }));
 
 app.use(function (err, req, res, next) {
-    if (err.name === 'UnauthorizedError') {
-      res.status(401).send('UnauthorizedError: Invalid token');
-    }
+    next();
 });
 
 app.use('/',
-    graphqlHTTP((req: Request) => ({
-        schema: Schema,
-        graphiql: true,
-        context: {
-            userId: req.user[process.env.USER_ID_FIELD_NAME as string || '_id'],
-        },
-    }))
+    graphqlHTTP((req: Request) => {
+        const context: any = {}
+        if (req.user){
+            context.userId = req.user[process.env.USER_ID_FIELD_NAME as string || '_id']
+        }
+        return {
+            schema: Schema,
+            graphiql: true,
+            context
+        }
+    })
 );
 
 const port = process.env.PORT || 5000;
