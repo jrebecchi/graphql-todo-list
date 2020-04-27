@@ -6,18 +6,19 @@ const TodoTC = composeWithMongoose(TodoModel);
 
 schemaComposer.Query.addFields({
     ...restricAccess({
-        todoOne: TodoTC.getResolver('findMany'),
+        todoOne: TodoTC.getResolver('findOne'),
         todoMany: TodoTC.getResolver('findMany'),
         todoCount: TodoTC.getResolver('count'),
-        todoPagination: TodoTC.getResolver('pagination')
-
+        todoPagination: TodoTC.getResolver('pagination'),
     })
 });
 
 schemaComposer.Mutation.addFields({
     ...restricAccess({
         todoCreateOne: TodoTC.getResolver('createOne'),
+        todoUpdateById: TodoTC.getResolver('updateById'),
         todoUpdateOne: TodoTC.getResolver('updateOne'),
+        todoRemoveById: TodoTC.getResolver('removeById'),
         todoRemoveOne: TodoTC.getResolver('removeOne'),
         todoRemoveMany: TodoTC.getResolver('removeMany')
     })
