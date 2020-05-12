@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import jwt from 'express-jwt';
+import jwksRsa from 'jwks-rsa';
 
 dotenv.config();
 
@@ -35,7 +36,15 @@ app.use(cors({
     credentials: true,
 }));
 
-app.use(jwt({ secret: process.env.SECRET }));
+app.use(jwt({
+    secret: jwksRsa.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: `https://nusid.net/krypton-auth/.well-known/jwks.json`
+    }),
+    algorithms: [ 'RS256' ]
+}));
 
 app.use(function (err, req, res, next) {
     next();
@@ -44,7 +53,7 @@ app.use(function (err, req, res, next) {
 app.use('/',
     graphqlHTTP((req: Request) => {
         const context: any = {}
-        if (req.user){
+        if (req.user) {
             context.userId = req.user[process.env.USER_ID_FIELD_NAME as string || '_id']
         }
         return {
